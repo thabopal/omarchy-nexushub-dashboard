@@ -2,7 +2,6 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Ui
-import "components" as Components
 
 Panel {
   id: root
@@ -19,15 +18,9 @@ Panel {
   readonly property color textPrimary: "#F4EEE7"
   readonly property color textMuted: "#8E8791"
   readonly property int cardRadius: 16
-  readonly property bool dockEnabled: !root.hostWidget || !root.hostWidget.settings || root.hostWidget.settings.dockEnabled !== false
 
-  function open() {
-    root.controller.show()
-  }
-
-  function close() {
-    root.controller.hide()
-  }
+  function open() { root.controller.show() }
+  function close() { root.controller.hide() }
 
   function switchPanel(direction) {
     if (root.bar && typeof root.bar.switchPanelFrom === "function")
@@ -189,26 +182,13 @@ Panel {
               spacing: Style.space(7)
               Text { text: "PROJECT PULSE"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
               Text { text: "NexusHub Dashboard"; color: root.textPrimary; font.pixelSize: Style.font.subtitle; font.bold: true }
-              Text { text: "Theme core ready · dock alpha ready"; color: root.accentSoft; font.pixelSize: Style.font.caption }
+              Text { text: "Control Center online · desktop dock mounted"; color: root.accentSoft; font.pixelSize: Style.font.caption }
             }
-          }
-
-          Components.NexusDock {
-            visible: root.dockEnabled
-            anchors.horizontalCenter: parent.horizontalCenter
-            bar: root.bar
-            surface: "#151A23"
-            surfaceBorder: "#2A3140"
-            foreground: root.textPrimary
-            muted: root.textMuted
-            accent: root.accent
           }
 
           Text {
             width: parent.width
-            text: root.dockEnabled
-              ? "Dock alpha · hover and click the app buttons"
-              : "Dock disabled in NexusHub widget settings"
+            text: "NexusHub Control Center · live widgets and profiles coming next"
             color: root.textMuted
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
