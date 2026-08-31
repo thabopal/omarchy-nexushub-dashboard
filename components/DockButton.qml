@@ -12,15 +12,18 @@ Item {
   property color accent: "#D86F55"
   property color surfaceHover: "#252C38"
   property bool running: false
+  property bool neighborHighlighted: false
+  readonly property bool hovered: mouse.containsMouse
 
   signal activated()
 
-  implicitWidth: 48
-  implicitHeight: 48
-  scale: mouse.containsMouse ? 1.08 : 1.0
+  implicitWidth: 50
+  implicitHeight: 50
+  transformOrigin: Item.Bottom
+  scale: hovered ? 1.16 : (neighborHighlighted ? 1.06 : 1.0)
 
   Behavior on scale {
-    NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+    NumberAnimation { duration: 155; easing.type: Easing.OutCubic }
   }
 
   function launch() {
@@ -31,8 +34,8 @@ Item {
 
   Rectangle {
     anchors.fill: parent
-    radius: 14
-    color: mouse.containsMouse ? root.surfaceHover : "transparent"
+    radius: 15
+    color: root.hovered ? root.surfaceHover : "transparent"
 
     Behavior on color { ColorAnimation { duration: 140 } }
 
@@ -40,26 +43,51 @@ Item {
       anchors.centerIn: parent
       anchors.verticalCenterOffset: root.running ? -2 : 0
       text: root.label
-      color: mouse.containsMouse ? root.foreground : root.muted
-      font.pixelSize: root.label.length <= 2 ? 14 : 10
+      color: root.hovered ? root.foreground : root.muted
+      font.family: "monospace"
+      font.pixelSize: root.label.length <= 2 ? 19 : 13
       font.bold: true
-      font.letterSpacing: root.label.length <= 2 ? 0.5 : 0
 
       Behavior on color { ColorAnimation { duration: 140 } }
     }
 
     Rectangle {
-      width: mouse.containsMouse ? 18 : 6
+      width: root.running ? 16 : (root.hovered ? 12 : 0)
       height: 3
       radius: 2
       anchors.horizontalCenter: parent.horizontalCenter
       anchors.bottom: parent.bottom
       anchors.bottomMargin: 3
       color: root.accent
-      opacity: root.running ? 1 : (mouse.containsMouse ? 0.9 : 0)
+      opacity: root.running ? 1 : (root.hovered ? 0.8 : 0)
 
       Behavior on width { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
       Behavior on opacity { NumberAnimation { duration: 120 } }
+    }
+  }
+
+  Rectangle {
+    id: tooltipBubble
+    visible: root.hovered && root.tooltip.length > 0
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.bottom: parent.top
+    anchors.bottomMargin: 10
+    width: tooltipText.implicitWidth + 18
+    height: 28
+    radius: 9
+    color: "#F21A202A"
+    border.width: 1
+    border.color: "#663A4352"
+    z: 100
+
+    Text {
+      id: tooltipText
+      anchors.centerIn: parent
+      text: root.tooltip
+      color: root.foreground
+      font.family: "monospace"
+      font.pixelSize: 11
+      font.bold: true
     }
   }
 
