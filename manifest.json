@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "dev.thabopal.nexushub-dashboard",
   "name": "NexusHub Dashboard",
-  "version": "0.1.0-alpha.1",
+  "version": "0.2.0-alpha.1",
   "author": "Thabo Pali",
   "license": "MIT",
   "description": "A modular personal dashboard and launcher for Omarchy.",
@@ -14,6 +14,17 @@
     "displayName": "NexusHub",
     "category": "Dashboard",
     "allowMultiple": false,
-    "defaultSection": "right"
+    "defaultSection": "right",
+    "defaults": {
+      "dockEnabled": true
+    },
+    "schema": [
+      {
+        "key": "dockEnabled",
+        "type": "boolean",
+        "label": "Show NexusHub dock",
+        "defaultValue": true
+      }
+    ]
   }
 }
