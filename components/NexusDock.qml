@@ -10,9 +10,11 @@ Rectangle {
   property color muted: "#8E8791"
   property color accent: "#D86F55"
 
-  implicitWidth: dockRow.implicitWidth + 28
-  implicitHeight: 62
-  radius: 20
+  signal nexusRequested()
+
+  implicitWidth: dockRow.implicitWidth + 30
+  implicitHeight: 66
+  radius: 22
   color: root.surface
   border.width: 1
   border.color: root.surfaceBorder
@@ -20,16 +22,16 @@ Rectangle {
   Row {
     id: dockRow
     anchors.centerIn: parent
-    spacing: 5
+    spacing: 6
 
     DockButton {
       bar: root.bar
       label: "NX"
-      tooltip: "Omarchy"
-      command: "omarchy-menu"
+      tooltip: "NexusHub Control Center"
       foreground: root.foreground
       muted: root.muted
       accent: root.accent
+      onActivated: root.nexusRequested()
     }
 
     Rectangle {
@@ -82,7 +84,7 @@ Rectangle {
     DockButton {
       bar: root.bar
       label: "DK"
-      tooltip: "Docker"
+      tooltip: "Docker / Lazydocker"
       command: "omarchy-launch-tui lazydocker"
       foreground: root.foreground
       muted: root.muted
