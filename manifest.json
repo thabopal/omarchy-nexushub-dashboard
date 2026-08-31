@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "dev.thabopal.nexushub-dashboard",
   "name": "NexusHub Dashboard",
-  "version": "0.2.0-alpha.1",
+  "version": "0.3.0-alpha.1",
   "author": "Thabo Pali",
   "license": "MIT",
-  "description": "A modular personal dashboard and launcher for Omarchy.",
+  "description": "A modular personal dashboard, control center, and desktop dock for Omarchy.",
   "kinds": ["bar-widget"],
   "entryPoints": {
     "barWidget": "BarWidget.qml"
@@ -22,7 +22,7 @@
       {
         "key": "dockEnabled",
         "type": "boolean",
-        "label": "Show NexusHub dock",
+        "label": "Show NexusHub desktop dock",
         "defaultValue": true
       }
     ]
