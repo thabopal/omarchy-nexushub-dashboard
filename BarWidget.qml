@@ -13,6 +13,8 @@ BarWidget {
     ? panelLoader.item.popoutSwitchClosing === true
     : false
   readonly property bool dockEnabled: !root.settings || root.settings.dockEnabled !== false
+  readonly property bool systemMonitorEnabled: !root.settings || root.settings.systemMonitorEnabled !== false
+  readonly property bool weatherEnabled: !root.settings || root.settings.weatherEnabled !== false
 
   function open() {
     if (panelLoader.item) panelLoader.item.open()
@@ -69,6 +71,13 @@ BarWidget {
     targetScreen: root.dockScreen()
     dockVisible: root.dockEnabled
     onNexusRequested: root.toggle()
+  }
+
+  DesktopWidgets {
+    bar: root.bar
+    targetScreen: root.dockScreen()
+    systemMonitorVisible: root.systemMonitorEnabled
+    weatherVisible: root.weatherEnabled
   }
 
   WidgetButton {

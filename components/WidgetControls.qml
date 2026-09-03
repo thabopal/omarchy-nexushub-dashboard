@@ -95,8 +95,8 @@ Rectangle {
 
       Repeater {
         model: [
-          { key: "systemMonitorEnabled", label: "System Monitor", enabled: root.systemMonitorEnabled },
-          { key: "weatherEnabled", label: "Weather", enabled: root.weatherEnabled },
+          { key: "systemMonitorEnabled", label: "System Monitor · Desktop", enabled: root.systemMonitorEnabled },
+          { key: "weatherEnabled", label: "Weather · Desktop", enabled: root.weatherEnabled },
           { key: "githubActivityEnabled", label: "GitHub Activity", enabled: root.githubActivityEnabled },
           { key: "projectPulseEnabled", label: "Project Pulse", enabled: root.projectPulseEnabled }
         ]

@@ -101,7 +101,7 @@ Panel {
     open: root.opened
     focusTarget: keyCatcher
     contentWidth: panel.fittedContentWidth(Style.space(430))
-    contentHeight: panel.fittedContentHeight(content.implicitHeight)
+    contentHeight: panel.fittedContentHeight(content.implicitHeight + Style.space(32), Style.space(650))
 
     PanelKeyCatcher {
       id: keyCatcher
@@ -114,11 +114,20 @@ Panel {
         color: root.surface
         radius: root.cardRadius
 
-        Column {
-          id: content
+        Flickable {
           anchors.fill: parent
           anchors.margins: Style.space(16)
-          spacing: Style.space(12)
+          contentWidth: width
+          contentHeight: content.implicitHeight
+          clip: true
+          boundsBehavior: Flickable.StopAtBounds
+          flickableDirection: Flickable.VerticalFlick
+          interactive: contentHeight > height
+
+          Column {
+            id: content
+            width: parent.width
+            spacing: Style.space(12)
 
           Row {
             width: parent.width
@@ -193,32 +202,6 @@ Panel {
             }
           }
 
-          Components.SystemMonitor {
-            width: parent.width
-            visible: root.systemMonitorEnabled
-            bar: root.bar
-            surface: root.surfaceAlt
-            track: "#242B37"
-            foreground: root.textPrimary
-            muted: root.textMuted
-            accent: root.accent
-            accentSoft: root.accentSoft
-          }
-
-          Components.WeatherCard {
-            width: parent.width
-            visible: root.weatherEnabled
-            bar: root.bar
-            locationName: "Bloemfontein"
-            latitude: -29.0852
-            longitude: 26.1596
-            surface: root.surfaceAlt
-            foreground: root.textPrimary
-            muted: root.textMuted
-            accent: root.accent
-            accentSoft: root.accentSoft
-          }
-
           Components.GitHubActivity {
             width: parent.width
             visible: root.githubActivityEnabled
@@ -259,12 +242,13 @@ Panel {
 
           Text {
             width: parent.width
-            text: "NexusHub Control Center · live weather, GitHub and system telemetry"
+            text: "NexusHub Control Center · desktop widgets, GitHub and projects"
             color: root.textMuted
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.family: root.bar ? root.bar.fontFamily : Style.font.family
             font.pixelSize: Style.font.caption
+          }
           }
         }
       }
