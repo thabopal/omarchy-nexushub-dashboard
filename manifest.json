@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "dev.thabopal.nexushub-dashboard",
   "name": "NexusHub Dashboard",
-  "version": "0.7.0-alpha.1",
+  "version": "0.7.0-alpha.2",
   "author": "Thabo Pali",
   "license": "MIT",
   "description": "A modular personal dashboard, control center, and desktop dock for Omarchy.",

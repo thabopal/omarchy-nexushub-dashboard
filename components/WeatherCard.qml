@@ -208,13 +208,53 @@ Rectangle {
         }
       }
 
-      Text {
+      Row {
         width: parent.width
-        text: "Feels like  " + root.formatTemp(root.feelsLike) + "   ·   Humidity  " + (root.humidity >= 0 ? root.humidity + "%" : "--")
-        color: root.foreground
-        elide: Text.ElideRight
-        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-        font.pixelSize: Style.font.caption
+        spacing: Style.space(18)
+
+        Item {
+          width: (parent.width - parent.spacing) / 2
+          height: feelsLabel.implicitHeight
+
+          Text {
+            id: feelsLabel
+            anchors.left: parent.left
+            text: "Feels like"
+            color: root.foreground
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+
+          Text {
+            anchors.right: parent.right
+            text: root.formatTemp(root.feelsLike)
+            color: root.foreground
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+        }
+
+        Item {
+          width: (parent.width - parent.spacing) / 2
+          height: humidityLabel.implicitHeight
+
+          Text {
+            id: humidityLabel
+            anchors.left: parent.left
+            text: "Humidity"
+            color: root.foreground
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+
+          Text {
+            anchors.right: parent.right
+            text: root.humidity >= 0 ? root.humidity + "%" : "--"
+            color: root.foreground
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+        }
       }
 
       Rectangle {
@@ -225,20 +265,50 @@ Rectangle {
 
       Row {
         width: parent.width
-        Text {
-          width: parent.width / 2
-          text: "Sunrise  " + root.sunrise
-          color: root.muted
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.caption
+        spacing: Style.space(18)
+
+        Item {
+          width: (parent.width - parent.spacing) / 2
+          height: sunriseLabel.implicitHeight
+
+          Text {
+            id: sunriseLabel
+            anchors.left: parent.left
+            text: "Sunrise"
+            color: root.muted
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+
+          Text {
+            anchors.right: parent.right
+            text: root.sunrise
+            color: root.muted
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
         }
-        Text {
-          width: parent.width / 2
-          text: "Sunset  " + root.sunset
-          color: root.muted
-          horizontalAlignment: Text.AlignRight
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.caption
+
+        Item {
+          width: (parent.width - parent.spacing) / 2
+          height: sunsetLabel.implicitHeight
+
+          Text {
+            id: sunsetLabel
+            anchors.left: parent.left
+            text: "Sunset"
+            color: root.muted
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+
+          Text {
+            anchors.right: parent.right
+            text: root.sunset
+            color: root.muted
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
         }
       }
     }
