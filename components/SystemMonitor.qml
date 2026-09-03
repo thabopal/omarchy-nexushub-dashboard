@@ -31,6 +31,7 @@ Rectangle {
   implicitHeight: Style.space(208)
   radius: Style.space(16)
   color: root.surface
+  clip: true
 
   function clampPercent(value) {
     return Math.max(0, Math.min(100, value))
@@ -120,16 +121,24 @@ Rectangle {
     width: parent ? parent.width : 0
     spacing: Style.space(3)
 
-    Row {
+    Item {
       width: parent.width
+      height: Math.max(metricTitle.implicitHeight, metricValue.implicitHeight)
+
       Text {
+        id: metricTitle
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
         text: parent.parent.title
         color: root.muted
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption
       }
+
       Text {
-        width: parent.width - implicitWidth
+        id: metricValue
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         text: root.percentText(parent.parent.value)
         color: root.foreground
         horizontalAlignment: Text.AlignRight
@@ -144,6 +153,7 @@ Rectangle {
       height: 5
       radius: 3
       color: root.track
+      clip: true
 
       Rectangle {
         width: parent.width * (Math.max(0, parent.parent.value) / 100)
@@ -160,17 +170,25 @@ Rectangle {
     anchors.margins: Style.space(14)
     spacing: Style.space(9)
 
-    Row {
+    Item {
       width: parent.width
+      height: Math.max(systemTitle.implicitHeight, liveLabel.implicitHeight)
+
       Text {
+        id: systemTitle
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
         text: "SYSTEM MONITOR"
         color: root.muted
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption
         font.bold: true
       }
+
       Text {
-        width: parent.width - implicitWidth
+        id: liveLabel
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         text: root.sampleReady ? "LIVE" : "SAMPLING"
         color: root.sampleReady ? root.accentSoft : root.muted
         horizontalAlignment: Text.AlignRight
@@ -194,16 +212,16 @@ Rectangle {
         width: (parent.width - Style.space(8)) / 2
         spacing: Style.space(3)
         Text { text: "BATTERY"; color: root.muted; font.pixelSize: Style.font.caption; font.bold: true }
-        Text { text: root.batteryText(); color: root.foreground; font.pixelSize: Style.font.caption }
-        Text { text: "TEMP  " + root.tempText(); color: root.accentSoft; font.pixelSize: Style.font.caption }
+        Text { width: parent.width; text: root.batteryText(); color: root.foreground; font.pixelSize: Style.font.caption; elide: Text.ElideRight }
+        Text { width: parent.width; text: "TEMP  " + root.tempText(); color: root.accentSoft; font.pixelSize: Style.font.caption; elide: Text.ElideRight }
       }
 
       Column {
         width: (parent.width - Style.space(8)) / 2
         spacing: Style.space(3)
         Text { text: "NETWORK"; color: root.muted; font.pixelSize: Style.font.caption; font.bold: true }
-        Text { text: "↓  " + root.formatRate(root.rxRate); color: root.foreground; font.pixelSize: Style.font.caption }
-        Text { text: "↑  " + root.formatRate(root.txRate); color: root.accentSoft; font.pixelSize: Style.font.caption }
+        Text { width: parent.width; text: "↓  " + root.formatRate(root.rxRate); color: root.foreground; font.pixelSize: Style.font.caption; elide: Text.ElideRight }
+        Text { width: parent.width; text: "↑  " + root.formatRate(root.txRate); color: root.accentSoft; font.pixelSize: Style.font.caption; elide: Text.ElideRight }
       }
     }
 
@@ -214,6 +232,7 @@ Rectangle {
       horizontalAlignment: Text.AlignRight
       font.family: root.bar ? root.bar.fontFamily : Style.font.family
       font.pixelSize: Style.font.caption
+      elide: Text.ElideRight
     }
   }
 }
