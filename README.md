@@ -6,6 +6,8 @@ A modular Quickshell dashboard for Omarchy with a dock, personal widgets, and pe
 
 System Monitor and Weather live directly on the desktop as click-through, glanceable cards. GitHub Activity, Project Pulse, and the controls remain in the compact Control Center. Use the controls card to show or hide every module; changes persist through Omarchy's bar settings.
 
+Project Pulse scans visible folders under your home directory to a bounded depth and shows the three most recently committed Git repositories. Each entry includes its branch, clean/dirty state, latest commit, commit age, and upstream ahead/behind state. The scan is read-only and refreshes every two minutes while the card is enabled.
+
 - **Development** — System Monitor, GitHub Activity, and Project Pulse
 - **Daily** — System Monitor, Weather, and Project Pulse
 - **Focus** — System Monitor only
