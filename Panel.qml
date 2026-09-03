@@ -145,31 +145,17 @@ Panel {
             accentSoft: root.accentSoft
           }
 
-          Rectangle {
+          Components.WeatherCard {
             width: parent.width
-            height: Style.space(84)
-            radius: root.cardRadius
-            color: root.surfaceAlt
-
-            Row {
-              anchors.fill: parent
-              anchors.margins: Style.space(12)
-              spacing: Style.space(14)
-
-              Column {
-                width: parent.width * 0.43
-                spacing: Style.space(5)
-                Text { text: "WEATHER"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
-                Text { text: "18°"; color: root.textPrimary; font.pixelSize: Style.font.displayMedium; font.bold: true }
-              }
-
-              Column {
-                width: parent.width * 0.53
-                spacing: Style.space(6)
-                Text { text: "BLOEMFONTEIN"; color: root.accentSoft; font.pixelSize: Style.font.caption; font.bold: true }
-                Text { text: "Weather service coming next"; color: root.textMuted; font.pixelSize: Style.font.caption; wrapMode: Text.WordWrap; width: parent.width }
-              }
-            }
+            bar: root.bar
+            locationName: "Bloemfontein"
+            latitude: -29.0852
+            longitude: 26.1596
+            surface: root.surfaceAlt
+            foreground: root.textPrimary
+            muted: root.textMuted
+            accent: root.accent
+            accentSoft: root.accentSoft
           }
 
           Rectangle {
@@ -184,13 +170,13 @@ Panel {
               spacing: Style.space(7)
               Text { text: "PROJECT PULSE"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
               Text { text: "NexusHub Dashboard"; color: root.textPrimary; font.pixelSize: Style.font.subtitle; font.bold: true }
-              Text { text: "Control Center online · system telemetry upgraded"; color: root.accentSoft; font.pixelSize: Style.font.caption }
+              Text { text: "Control Center online · weather + telemetry live"; color: root.accentSoft; font.pixelSize: Style.font.caption }
             }
           }
 
           Text {
             width: parent.width
-            text: "NexusHub Control Center · live system telemetry"
+            text: "NexusHub Control Center · live weather and system telemetry"
             color: root.textMuted
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
