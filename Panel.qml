@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import qs.Commons
 import qs.Ui
 
@@ -10,6 +11,12 @@ Panel {
 
   property var anchorItem: null
   property var hostWidget: null
+
+  property int cpuUsage: -1
+  property int ramUsage: -1
+  property int diskUsage: -1
+  property string uptimeText: "--"
+  property bool systemSampleReady: false
 
   readonly property color surface: "#11151D"
   readonly property color surfaceAlt: "#171C26"
@@ -28,9 +35,54 @@ Panel {
     return false
   }
 
+  function percentText(value) {
+    return value >= 0 ? value + "%" : "--"
+  }
+
+  function refreshSystemStats() {
+    if (!systemStats.running) systemStats.running = true
+  }
+
   SystemClock {
     id: clock
     precision: SystemClock.Seconds
+  }
+
+  Process {
+    id: systemStats
+    command: [
+      "bash",
+      "-lc",
+      "read -r _ u1 n1 s1 i1 io1 irq1 sirq1 st1 _ < /proc/stat; t1=$((u1+n1+s1+i1+io1+irq1+sirq1+st1)); idle1=$((i1+io1)); sleep 0.18; read -r _ u2 n2 s2 i2 io2 irq2 sirq2 st2 _ < /proc/stat; t2=$((u2+n2+s2+i2+io2+irq2+sirq2+st2)); idle2=$((i2+io2)); dt=$((t2-t1)); di=$((idle2-idle1)); if (( dt > 0 )); then cpu=$((100*(dt-di)/dt)); else cpu=0; fi; mt=$(awk '/MemTotal:/ {print $2}' /proc/meminfo); ma=$(awk '/MemAvailable:/ {print $2}' /proc/meminfo); if (( mt > 0 )); then ram=$((100*(mt-ma)/mt)); else ram=0; fi; disk=$(df -P / | awk 'NR==2 {gsub(/%/,\"\",$5); print $5}'); up=$(cut -d. -f1 /proc/uptime); days=$((up/86400)); hours=$(((up%86400)/3600)); mins=$(((up%3600)/60)); if (( days > 0 )); then uptime=\"${days}d ${hours}h\"; elif (( hours > 0 )); then uptime=\"${hours}h ${mins}m\"; else uptime=\"${mins}m\"; fi; printf '%s|%s|%s|%s\\n' \"$cpu\" \"$ram\" \"$disk\" \"$uptime\""
+    ]
+
+    stdout: StdioCollector {
+      waitForEnd: true
+      onStreamFinished: {
+        var line = String(text || "").trim()
+        var parts = line.split("|")
+        if (parts.length !== 4) return
+
+        var cpu = parseInt(parts[0])
+        var ram = parseInt(parts[1])
+        var disk = parseInt(parts[2])
+        if (isNaN(cpu) || isNaN(ram) || isNaN(disk)) return
+
+        root.cpuUsage = Math.max(0, Math.min(100, cpu))
+        root.ramUsage = Math.max(0, Math.min(100, ram))
+        root.diskUsage = Math.max(0, Math.min(100, disk))
+        root.uptimeText = parts[3] || "--"
+        root.systemSampleReady = true
+      }
+    }
+  }
+
+  Timer {
+    interval: 4000
+    repeat: true
+    running: true
+    triggeredOnStart: true
+    onTriggered: root.refreshSystemStats()
   }
 
   KeyboardPanel {
@@ -139,7 +191,7 @@ Panel {
 
             Rectangle {
               width: (parent.width - Style.space(10)) / 2
-              height: Style.space(92)
+              height: Style.space(108)
               radius: root.cardRadius
               color: root.surfaceAlt
 
@@ -155,17 +207,40 @@ Panel {
 
             Rectangle {
               width: (parent.width - Style.space(10)) / 2
-              height: Style.space(92)
+              height: Style.space(108)
               radius: root.cardRadius
               color: root.surfaceAlt
 
               Column {
                 anchors.fill: parent
                 anchors.margins: Style.space(12)
-                spacing: Style.space(6)
-                Text { text: "SYSTEM"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
-                Text { text: "CPU  24%"; color: root.textPrimary; font.pixelSize: Style.font.subtitle; font.bold: true }
-                Text { text: "RAM  41%"; color: root.textMuted; font.pixelSize: Style.font.caption }
+                spacing: Style.space(5)
+
+                Row {
+                  width: parent.width
+                  Text { text: "SYSTEM"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
+                  Text {
+                    width: parent.width - implicitWidth
+                    text: root.systemSampleReady ? "LIVE" : "SAMPLING"
+                    color: root.systemSampleReady ? root.accentSoft : root.textMuted
+                    horizontalAlignment: Text.AlignRight
+                    font.pixelSize: Style.font.caption
+                    font.bold: true
+                  }
+                }
+
+                Text {
+                  text: "CPU  " + root.percentText(root.cpuUsage) + "   RAM  " + root.percentText(root.ramUsage)
+                  color: root.textPrimary
+                  font.pixelSize: Style.font.subtitle
+                  font.bold: true
+                }
+
+                Text {
+                  text: "Disk  " + root.percentText(root.diskUsage) + "   Up  " + root.uptimeText
+                  color: root.textMuted
+                  font.pixelSize: Style.font.caption
+                }
               }
             }
           }
@@ -188,7 +263,7 @@ Panel {
 
           Text {
             width: parent.width
-            text: "NexusHub Control Center · live widgets and profiles coming next"
+            text: "NexusHub Control Center · system telemetry live"
             color: root.textMuted
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
