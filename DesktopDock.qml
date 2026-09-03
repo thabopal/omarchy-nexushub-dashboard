@@ -19,21 +19,27 @@ Item {
     screen: root.targetScreen
     visible: root.dockVisible
     color: "transparent"
-    exclusionMode: ExclusionMode.Ignore
+
+    // Reserve only the dock strip at the bottom of the screen. Normal tiled
+    // and maximized windows now stop above it instead of rendering behind it.
+    exclusionMode: root.dockVisible ? ExclusionMode.Auto : ExclusionMode.Ignore
+    implicitHeight: dock.implicitHeight + root.bottomMargin
 
     anchors {
-      top: true
       bottom: true
       left: true
       right: true
     }
 
+    // Keep the dock below normal application windows. Hyprland still honours
+    // the exclusive zone for tiled/maximized clients, while real fullscreen
+    // windows can cover the dock naturally.
     WlrLayershell.namespace: "nexushub-dock"
-    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.layer: WlrLayer.Bottom
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
-    // Keep the fullscreen layer surface click-through everywhere except the
-    // actual dock. This lets normal desktop/app clicks pass straight through.
+    // The surface spans the screen width so it can reserve bottom space, but
+    // only the actual dock accepts pointer input.
     mask: Region {
       x: dock.x
       y: dock.y
