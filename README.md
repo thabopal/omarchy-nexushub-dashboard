@@ -1,6 +1,16 @@
 # NexusHub Dashboard for Omarchy
 
-A modular Quickshell dashboard for Omarchy with a dock, personal widgets, profiles, and a master enable/disable path.
+A modular Quickshell dashboard for Omarchy with a dock, personal widgets, and persistent profiles.
+
+## Widget controls and profiles
+
+Open the NexusHub Control Center and use the controls card to show or hide System Monitor, Weather, GitHub Activity, and Project Pulse. Changes persist through Omarchy's bar settings.
+
+- **Development** — System Monitor, GitHub Activity, and Project Pulse
+- **Daily** — System Monitor, Weather, and Project Pulse
+- **Focus** — System Monitor only
+
+Changing an individual widget switches the profile label to **Custom** without changing the dock.
 
 ## Design goals
 

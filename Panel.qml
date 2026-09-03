@@ -11,6 +11,15 @@ Panel {
 
   property var anchorItem: null
   property var hostWidget: null
+  property var settings: ({})
+
+  readonly property bool systemMonitorEnabled: settingEnabled("systemMonitorEnabled")
+  readonly property bool weatherEnabled: settingEnabled("weatherEnabled")
+  readonly property bool githubActivityEnabled: settingEnabled("githubActivityEnabled")
+  readonly property bool projectPulseEnabled: settingEnabled("projectPulseEnabled")
+  readonly property string activeProfile: settings && settings.activeProfile
+    ? String(settings.activeProfile)
+    : "custom"
 
   readonly property color surface: "#11151D"
   readonly property color surfaceAlt: "#171C26"
@@ -22,6 +31,56 @@ Panel {
 
   function open() { root.controller.show() }
   function close() { root.controller.hide() }
+
+  function settingEnabled(key) {
+    return !root.settings || root.settings[key] !== false
+  }
+
+  function persistSettings(values) {
+    var entry = { id: root.moduleName }
+    for (var existing in root.settings)
+      if (existing !== "id") entry[existing] = root.settings[existing]
+    for (var key in values) entry[key] = values[key]
+
+    root.settings = entry
+    if (root.hostWidget && "settings" in root.hostWidget) root.hostWidget.settings = entry
+    if (root.bar && root.bar.shell && typeof root.bar.shell.updateEntryInline === "function")
+      root.bar.shell.updateEntryInline(root.moduleName, entry)
+  }
+
+  function setWidgetEnabled(key, enabled) {
+    var values = { activeProfile: "custom" }
+    values[key] = enabled
+    persistSettings(values)
+  }
+
+  function applyProfile(profile) {
+    if (profile === "development") {
+      persistSettings({
+        activeProfile: profile,
+        systemMonitorEnabled: true,
+        weatherEnabled: false,
+        githubActivityEnabled: true,
+        projectPulseEnabled: true
+      })
+    } else if (profile === "focus") {
+      persistSettings({
+        activeProfile: profile,
+        systemMonitorEnabled: true,
+        weatherEnabled: false,
+        githubActivityEnabled: false,
+        projectPulseEnabled: false
+      })
+    } else {
+      persistSettings({
+        activeProfile: "daily",
+        systemMonitorEnabled: true,
+        weatherEnabled: true,
+        githubActivityEnabled: false,
+        projectPulseEnabled: true
+      })
+    }
+  }
 
   function switchPanel(direction) {
     if (root.bar && typeof root.bar.switchPanelFrom === "function")
@@ -136,6 +195,7 @@ Panel {
 
           Components.SystemMonitor {
             width: parent.width
+            visible: root.systemMonitorEnabled
             bar: root.bar
             surface: root.surfaceAlt
             track: "#242B37"
@@ -147,6 +207,7 @@ Panel {
 
           Components.WeatherCard {
             width: parent.width
+            visible: root.weatherEnabled
             bar: root.bar
             locationName: "Bloemfontein"
             latitude: -29.0852
@@ -160,6 +221,7 @@ Panel {
 
           Components.GitHubActivity {
             width: parent.width
+            visible: root.githubActivityEnabled
             bar: root.bar
             username: "thabopal"
             surface: root.surfaceAlt
@@ -169,20 +231,30 @@ Panel {
             accentSoft: root.accentSoft
           }
 
-          Rectangle {
+          Components.ProjectPulse {
             width: parent.width
-            height: Style.space(92)
-            radius: root.cardRadius
-            color: root.surfaceAlt
+            visible: root.projectPulseEnabled
+            bar: root.bar
+            surface: root.surfaceAlt
+            foreground: root.textPrimary
+            muted: root.textMuted
+            accentSoft: root.accentSoft
+          }
 
-            Column {
-              anchors.fill: parent
-              anchors.margins: Style.space(12)
-              spacing: Style.space(7)
-              Text { text: "PROJECT PULSE"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
-              Text { text: "NexusHub Dashboard"; color: root.textPrimary; font.pixelSize: Style.font.subtitle; font.bold: true }
-              Text { text: "Control Center online · weather, GitHub + telemetry live"; color: root.accentSoft; font.pixelSize: Style.font.caption }
-            }
+          Components.WidgetControls {
+            width: parent.width
+            bar: root.bar
+            surface: root.surfaceAlt
+            foreground: root.textPrimary
+            muted: root.textMuted
+            accent: root.accent
+            activeProfile: root.activeProfile
+            systemMonitorEnabled: root.systemMonitorEnabled
+            weatherEnabled: root.weatherEnabled
+            githubActivityEnabled: root.githubActivityEnabled
+            projectPulseEnabled: root.projectPulseEnabled
+            onProfileRequested: function(profile) { root.applyProfile(profile) }
+            onWidgetRequested: function(key, enabled) { root.setWidgetEnabled(key, enabled) }
           }
 
           Text {
