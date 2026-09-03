@@ -158,6 +158,17 @@ Panel {
             accentSoft: root.accentSoft
           }
 
+          Components.GitHubActivity {
+            width: parent.width
+            bar: root.bar
+            username: "thabopal"
+            surface: root.surfaceAlt
+            foreground: root.textPrimary
+            muted: root.textMuted
+            accent: root.accent
+            accentSoft: root.accentSoft
+          }
+
           Rectangle {
             width: parent.width
             height: Style.space(92)
@@ -170,13 +181,13 @@ Panel {
               spacing: Style.space(7)
               Text { text: "PROJECT PULSE"; color: root.textMuted; font.pixelSize: Style.font.caption; font.bold: true }
               Text { text: "NexusHub Dashboard"; color: root.textPrimary; font.pixelSize: Style.font.subtitle; font.bold: true }
-              Text { text: "Control Center online · weather + telemetry live"; color: root.accentSoft; font.pixelSize: Style.font.caption }
+              Text { text: "Control Center online · weather, GitHub + telemetry live"; color: root.accentSoft; font.pixelSize: Style.font.caption }
             }
           }
 
           Text {
             width: parent.width
-            text: "NexusHub Control Center · live weather and system telemetry"
+            text: "NexusHub Control Center · live weather, GitHub and system telemetry"
             color: root.textMuted
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
