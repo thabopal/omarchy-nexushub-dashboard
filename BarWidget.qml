@@ -15,6 +15,12 @@ BarWidget {
   readonly property bool dockEnabled: !root.settings || root.settings.dockEnabled !== false
   readonly property bool systemMonitorEnabled: !root.settings || root.settings.systemMonitorEnabled !== false
   readonly property bool weatherEnabled: !root.settings || root.settings.weatherEnabled !== false
+  readonly property var dockOrder: root.settings && root.settings.dockOrder instanceof Array
+    ? root.settings.dockOrder
+    : ["browser", "terminal", "editor", "spotify", "docker"]
+  readonly property var dockHidden: root.settings && root.settings.dockHidden instanceof Array
+    ? root.settings.dockHidden
+    : []
 
   function open() {
     if (panelLoader.item) panelLoader.item.open()
@@ -70,6 +76,8 @@ BarWidget {
     bar: root.bar
     targetScreen: root.dockScreen()
     dockVisible: root.dockEnabled
+    dockOrder: root.dockOrder
+    dockHidden: root.dockHidden
     onNexusRequested: root.toggle()
   }
 

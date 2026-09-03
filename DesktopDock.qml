@@ -10,6 +10,8 @@ Item {
   property var bar: null
   property var targetScreen: null
   property bool dockVisible: true
+  property var dockOrder: []
+  property var dockHidden: []
   property int bottomMargin: Style.space(18)
 
   signal nexusRequested()
@@ -58,6 +60,8 @@ Item {
       foreground: "#F4EEE7"
       muted: "#A8A0AA"
       accent: "#D86F55"
+      dockOrder: root.dockOrder
+      dockHidden: root.dockHidden
       onNexusRequested: root.nexusRequested()
     }
   }

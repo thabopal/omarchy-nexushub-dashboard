@@ -20,6 +20,10 @@ Panel {
   readonly property string activeProfile: settings && settings.activeProfile
     ? String(settings.activeProfile)
     : "custom"
+  readonly property var dockOrder: normalizedDockOrder()
+  readonly property var dockHidden: settings && settings.dockHidden instanceof Array
+    ? settings.dockHidden
+    : []
 
   readonly property color surface: "#11151D"
   readonly property color surfaceAlt: "#171C26"
@@ -52,6 +56,39 @@ Panel {
     var values = { activeProfile: "custom" }
     values[key] = enabled
     persistSettings(values)
+  }
+
+  function normalizedDockOrder() {
+    var defaults = ["browser", "terminal", "editor", "spotify", "docker"]
+    var configured = root.settings && root.settings.dockOrder instanceof Array
+      ? root.settings.dockOrder
+      : []
+    var result = []
+    for (var i = 0; i < configured.length; i++)
+      if (defaults.indexOf(configured[i]) !== -1 && result.indexOf(configured[i]) === -1)
+        result.push(configured[i])
+    for (var j = 0; j < defaults.length; j++)
+      if (result.indexOf(defaults[j]) === -1) result.push(defaults[j])
+    return result
+  }
+
+  function setDockItemEnabled(itemId, enabled) {
+    var hidden = root.dockHidden.slice()
+    var index = hidden.indexOf(itemId)
+    if (enabled && index !== -1) hidden.splice(index, 1)
+    else if (!enabled && index === -1) hidden.push(itemId)
+    persistSettings({ dockHidden: hidden, dockOrder: root.dockOrder })
+  }
+
+  function moveDockItem(itemId, delta) {
+    var order = root.dockOrder.slice()
+    var index = order.indexOf(itemId)
+    var target = index + delta
+    if (index < 0 || target < 0 || target >= order.length) return
+    var moved = order[index]
+    order.splice(index, 1)
+    order.splice(target, 0, moved)
+    persistSettings({ dockOrder: order })
   }
 
   function applyProfile(profile) {
@@ -238,6 +275,19 @@ Panel {
             projectPulseEnabled: root.projectPulseEnabled
             onProfileRequested: function(profile) { root.applyProfile(profile) }
             onWidgetRequested: function(key, enabled) { root.setWidgetEnabled(key, enabled) }
+          }
+
+          Components.DockControls {
+            width: parent.width
+            bar: root.bar
+            surface: root.surfaceAlt
+            foreground: root.textPrimary
+            muted: root.textMuted
+            accent: root.accent
+            dockOrder: root.dockOrder
+            dockHidden: root.dockHidden
+            onItemToggled: function(itemId, enabled) { root.setDockItemEnabled(itemId, enabled) }
+            onMoveRequested: function(itemId, delta) { root.moveDockItem(itemId, delta) }
           }
 
           Text {

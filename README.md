@@ -14,6 +14,8 @@ Project Pulse scans visible folders under your home directory to a bounded depth
 
 Changing an individual widget switches the profile label to **Custom** without changing the dock.
 
+Dock Controls let you show, hide, and reorder Browser, Terminal, Editor, Spotify, and Docker / Lazydocker. NexusHub remains fixed at the start of the dock so its settings are always reachable.
+
 ## Design goals
 
 - every visible module is optional

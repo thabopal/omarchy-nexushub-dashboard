@@ -15,6 +15,9 @@ Rectangle {
   property var clients: []
   property int hoveredIndex: -1
   property bool refreshPending: false
+  property var dockOrder: ["browser", "terminal", "editor", "spotify", "docker"]
+  property var dockHidden: []
+  readonly property var visibleDockItems: orderedDockItems()
 
   signal nexusRequested()
 
@@ -59,6 +62,54 @@ Rectangle {
 
   function neighborOf(index) {
     return root.hoveredIndex >= 0 && Math.abs(root.hoveredIndex - index) === 1
+  }
+
+  function appDefinition(itemId) {
+    var definitions = {
+      browser: {
+        id: "browser", label: "", tooltip: "Browser",
+        command: "omarchy-launch-or-focus 'brave|chromium|firefox|google-chrome' 'omarchy-launch-browser'",
+        patterns: ["brave", "chromium", "firefox", "google-chrome"]
+      },
+      terminal: {
+        id: "terminal", label: "", tooltip: "Terminal",
+        command: "omarchy-launch-or-focus 'kitty|alacritty|foot|ghostty' 'uwsm-app -- $TERMINAL'",
+        patterns: ["kitty", "alacritty", "foot", "ghostty"]
+      },
+      editor: {
+        id: "editor", label: "", tooltip: "Editor",
+        command: "omarchy-launch-or-focus 'code|codium|cursor|zed' 'omarchy-launch-editor'",
+        patterns: ["code", "codium", "cursor", "zed"]
+      },
+      spotify: {
+        id: "spotify", label: "", tooltip: "Spotify",
+        command: "omarchy-launch-or-focus spotify",
+        patterns: ["spotify"]
+      },
+      docker: {
+        id: "docker", label: "", tooltip: "Docker / Lazydocker",
+        command: "omarchy-launch-or-focus-tui lazydocker",
+        patterns: ["org.omarchy.lazydocker", "lazydocker"]
+      }
+    }
+    return definitions[itemId] || null
+  }
+
+  function orderedDockItems() {
+    var defaults = ["browser", "terminal", "editor", "spotify", "docker"]
+    var source = root.dockOrder instanceof Array ? root.dockOrder : defaults
+    var hidden = root.dockHidden instanceof Array ? root.dockHidden : []
+    var result = []
+    for (var i = 0; i < source.length; i++) {
+      var item = root.appDefinition(source[i])
+      if (item && hidden.indexOf(item.id) === -1) result.push(item)
+    }
+    for (var j = 0; j < defaults.length; j++) {
+      var fallback = root.appDefinition(defaults[j])
+      if (source.indexOf(defaults[j]) === -1 && hidden.indexOf(defaults[j]) === -1)
+        result.push(fallback)
+    }
+    return result
   }
 
   Component.onCompleted: refreshClients()
@@ -129,73 +180,28 @@ Rectangle {
     Rectangle {
       width: 1
       height: 32
+      visible: root.visibleDockItems.length > 0
       color: root.surfaceBorder
       anchors.verticalCenter: parent.verticalCenter
     }
 
-    DockButton {
-      bar: root.bar
-      label: ""
-      tooltip: "Browser"
-      command: "omarchy-launch-or-focus 'brave|chromium|firefox|google-chrome' 'omarchy-launch-browser'"
-      running: root.appRunning(["brave", "chromium", "firefox", "google-chrome"])
-      foreground: root.foreground
-      muted: root.muted
-      accent: root.accent
-      neighborHighlighted: root.neighborOf(1)
-      onHoveredChanged: root.setHover(1, hovered)
-    }
+    Repeater {
+      model: root.visibleDockItems
 
-    DockButton {
-      bar: root.bar
-      label: ""
-      tooltip: "Terminal"
-      command: "omarchy-launch-or-focus 'kitty|alacritty|foot|ghostty' 'uwsm-app -- $TERMINAL'"
-      running: root.appRunning(["kitty", "alacritty", "foot", "ghostty"])
-      foreground: root.foreground
-      muted: root.muted
-      accent: root.accent
-      neighborHighlighted: root.neighborOf(2)
-      onHoveredChanged: root.setHover(2, hovered)
-    }
-
-    DockButton {
-      bar: root.bar
-      label: ""
-      tooltip: "Editor"
-      command: "omarchy-launch-or-focus 'code|codium|cursor|zed' 'omarchy-launch-editor'"
-      running: root.appRunning(["code", "codium", "cursor", "zed"])
-      foreground: root.foreground
-      muted: root.muted
-      accent: root.accent
-      neighborHighlighted: root.neighborOf(3)
-      onHoveredChanged: root.setHover(3, hovered)
-    }
-
-    DockButton {
-      bar: root.bar
-      label: ""
-      tooltip: "Spotify"
-      command: "omarchy-launch-or-focus spotify"
-      running: root.appRunning(["spotify"])
-      foreground: root.foreground
-      muted: root.muted
-      accent: root.accent
-      neighborHighlighted: root.neighborOf(4)
-      onHoveredChanged: root.setHover(4, hovered)
-    }
-
-    DockButton {
-      bar: root.bar
-      label: ""
-      tooltip: "Docker / Lazydocker"
-      command: "omarchy-launch-or-focus-tui lazydocker"
-      running: root.appRunning(["org.omarchy.lazydocker", "lazydocker"])
-      foreground: root.foreground
-      muted: root.muted
-      accent: root.accent
-      neighborHighlighted: root.neighborOf(5)
-      onHoveredChanged: root.setHover(5, hovered)
+      delegate: DockButton {
+        required property var modelData
+        required property int index
+        bar: root.bar
+        label: modelData.label
+        tooltip: modelData.tooltip
+        command: modelData.command
+        running: root.appRunning(modelData.patterns)
+        foreground: root.foreground
+        muted: root.muted
+        accent: root.accent
+        neighborHighlighted: root.neighborOf(index + 1)
+        onHoveredChanged: root.setHover(index + 1, hovered)
+      }
     }
   }
 }
