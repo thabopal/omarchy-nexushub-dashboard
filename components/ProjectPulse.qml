@@ -131,6 +131,7 @@ Rectangle {
 
       delegate: Item {
         required property var modelData
+        required property int index
         width: parent ? parent.width : 0
         height: Style.space(51)
 

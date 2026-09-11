@@ -159,14 +159,14 @@ Rectangle {
           text: root.iconForCode(root.weatherCode)
           color: root.accentSoft
           font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.displayMedium
+          font.pixelSize: Style.font.display
         }
 
         Text {
           text: root.formatTemp(root.temperature)
           color: root.foreground
           font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.displayMedium
+          font.pixelSize: Style.font.display
           font.bold: true
         }
       }
