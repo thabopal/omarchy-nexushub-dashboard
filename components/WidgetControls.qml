@@ -14,6 +14,9 @@ Rectangle {
   property bool weatherEnabled: true
   property bool githubActivityEnabled: true
   property bool projectPulseEnabled: true
+  property bool eplEnabled: true
+  property bool uclEnabled: true
+  property bool newsEnabled: true
 
   signal profileRequested(string profile)
   signal widgetRequested(string key, bool enabled)
@@ -97,6 +100,9 @@ Rectangle {
         model: [
           { key: "systemMonitorEnabled", label: "System Monitor · Desktop", enabled: root.systemMonitorEnabled },
           { key: "weatherEnabled", label: "Weather · Desktop", enabled: root.weatherEnabled },
+          { key: "eplEnabled", label: "EPL Fixtures · Desktop", enabled: root.eplEnabled },
+          { key: "uclEnabled", label: "Champions League · Desktop", enabled: root.uclEnabled },
+          { key: "newsEnabled", label: "Top News · Desktop", enabled: root.newsEnabled },
           { key: "githubActivityEnabled", label: "GitHub Activity", enabled: root.githubActivityEnabled },
           { key: "projectPulseEnabled", label: "Project Pulse", enabled: root.projectPulseEnabled }
         ]

@@ -11,8 +11,13 @@ Item {
   property var targetScreen: null
   property bool systemMonitorVisible: true
   property bool weatherVisible: true
+  property bool eplVisible: true
+  property bool uclVisible: true
+  property bool newsVisible: true
+  property string footballApiKey: ""
 
   readonly property bool hasVisibleWidgets: root.systemMonitorVisible || root.weatherVisible
+    || root.eplVisible || root.uclVisible || root.newsVisible
 
   PanelWindow {
     id: desktopWindow
@@ -79,6 +84,63 @@ Item {
           locationName: "Bloemfontein"
           latitude: -29.0852
           longitude: 26.1596
+          surface: "#E6171C26"
+          foreground: "#F4EEE7"
+          muted: "#A8A0AA"
+          accent: "#D86F55"
+          accentSoft: "#E5A66E"
+        }
+      }
+
+      Loader {
+        width: parent.width
+        active: root.eplVisible
+        visible: active
+        height: item ? item.implicitHeight : 0
+
+        sourceComponent: Components.FootballCard {
+          width: parent ? parent.width : 0
+          bar: root.bar
+          apiKey: root.footballApiKey
+          competitionCode: "PL"
+          competitionShort: "EPL"
+          surface: "#E6171C26"
+          foreground: "#F4EEE7"
+          muted: "#A8A0AA"
+          accent: "#D86F55"
+          accentSoft: "#E5A66E"
+        }
+      }
+
+      Loader {
+        width: parent.width
+        active: root.uclVisible
+        visible: active
+        height: item ? item.implicitHeight : 0
+
+        sourceComponent: Components.FootballCard {
+          width: parent ? parent.width : 0
+          bar: root.bar
+          apiKey: root.footballApiKey
+          competitionCode: "CL"
+          competitionShort: "UCL"
+          surface: "#E6171C26"
+          foreground: "#F4EEE7"
+          muted: "#A8A0AA"
+          accent: "#D86F55"
+          accentSoft: "#E5A66E"
+        }
+      }
+
+      Loader {
+        width: parent.width
+        active: root.newsVisible
+        visible: active
+        height: item ? item.implicitHeight : 0
+
+        sourceComponent: Components.NewsCard {
+          width: parent ? parent.width : 0
+          bar: root.bar
           surface: "#E6171C26"
           foreground: "#F4EEE7"
           muted: "#A8A0AA"

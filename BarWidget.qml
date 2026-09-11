@@ -15,6 +15,12 @@ BarWidget {
   readonly property bool dockEnabled: !root.settings || root.settings.dockEnabled !== false
   readonly property bool systemMonitorEnabled: !root.settings || root.settings.systemMonitorEnabled !== false
   readonly property bool weatherEnabled: !root.settings || root.settings.weatherEnabled !== false
+  readonly property bool eplEnabled: !root.settings || root.settings.eplEnabled !== false
+  readonly property bool uclEnabled: !root.settings || root.settings.uclEnabled !== false
+  readonly property bool newsEnabled: !root.settings || root.settings.newsEnabled !== false
+  readonly property string footballApiKey: root.settings && root.settings.footballApiKey
+    ? String(root.settings.footballApiKey)
+    : ""
   readonly property var dockOrder: root.settings && root.settings.dockOrder instanceof Array
     ? root.settings.dockOrder
     : ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
@@ -86,6 +92,10 @@ BarWidget {
     targetScreen: root.dockScreen()
     systemMonitorVisible: root.systemMonitorEnabled
     weatherVisible: root.weatherEnabled
+    eplVisible: root.eplEnabled
+    uclVisible: root.uclEnabled
+    newsVisible: root.newsEnabled
+    footballApiKey: root.footballApiKey
   }
 
   WidgetButton {

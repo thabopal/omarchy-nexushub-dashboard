@@ -17,6 +17,9 @@ Panel {
   readonly property bool weatherEnabled: settingEnabled("weatherEnabled")
   readonly property bool githubActivityEnabled: settingEnabled("githubActivityEnabled")
   readonly property bool projectPulseEnabled: settingEnabled("projectPulseEnabled")
+  readonly property bool eplEnabled: settingEnabled("eplEnabled")
+  readonly property bool uclEnabled: settingEnabled("uclEnabled")
+  readonly property bool newsEnabled: settingEnabled("newsEnabled")
   readonly property string activeProfile: settings && settings.activeProfile
     ? String(settings.activeProfile)
     : "custom"
@@ -98,7 +101,10 @@ Panel {
         systemMonitorEnabled: true,
         weatherEnabled: false,
         githubActivityEnabled: true,
-        projectPulseEnabled: true
+        projectPulseEnabled: true,
+        eplEnabled: false,
+        uclEnabled: false,
+        newsEnabled: false
       })
     } else if (profile === "focus") {
       persistSettings({
@@ -106,7 +112,10 @@ Panel {
         systemMonitorEnabled: true,
         weatherEnabled: false,
         githubActivityEnabled: false,
-        projectPulseEnabled: false
+        projectPulseEnabled: false,
+        eplEnabled: false,
+        uclEnabled: false,
+        newsEnabled: false
       })
     } else {
       persistSettings({
@@ -114,7 +123,10 @@ Panel {
         systemMonitorEnabled: true,
         weatherEnabled: true,
         githubActivityEnabled: false,
-        projectPulseEnabled: true
+        projectPulseEnabled: true,
+        eplEnabled: true,
+        uclEnabled: true,
+        newsEnabled: true
       })
     }
   }
@@ -273,6 +285,9 @@ Panel {
             weatherEnabled: root.weatherEnabled
             githubActivityEnabled: root.githubActivityEnabled
             projectPulseEnabled: root.projectPulseEnabled
+            eplEnabled: root.eplEnabled
+            uclEnabled: root.uclEnabled
+            newsEnabled: root.newsEnabled
             onProfileRequested: function(profile) { root.applyProfile(profile) }
             onWidgetRequested: function(key, enabled) { root.setWidgetEnabled(key, enabled) }
           }
