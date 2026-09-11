@@ -29,7 +29,7 @@ Rectangle {
 
   readonly property var active: root.byCode[root.activeCode] || null
 
-  implicitHeight: Style.space(126)
+  implicitHeight: mainColumn.implicitHeight + Style.space(28)
   radius: Style.space(16)
   color: root.surface
   clip: true
@@ -50,21 +50,21 @@ Rectangle {
     footballProcess.command = [
       "bash",
       "-lc",
-      "set -o pipefail; from=$(date -u -d '-10 days' +%F); to=$(date -u -d '+21 days' +%F); "
+      "set -o pipefail; from=$(date -u -d '-21 days' +%F); to=$(date -u -d '+45 days' +%F); "
       + "for code in PL CL; do "
       + "curl -fsS --max-time 8 -H \"X-Auth-Token: " + root.apiKey + "\" "
       + "\"https://api.football-data.org/v4/competitions/$code/matches?dateFrom=$from&dateTo=$to\" "
-      + "| jq -r --arg code \"$code\" '(.matches // []) as $m "
-      + "| ($m | map(select(.status==\"SCHEDULED\" or .status==\"TIMED\")) | sort_by(.utcDate) | first) as $next "
-      + "| ($m | map(select(.status==\"FINISHED\")) | sort_by(.utcDate) | last) as $last "
-      + "| [$code, ($next.homeTeam.tla // $next.homeTeam.shortName // \"\"), "
-      + "($next.awayTeam.tla // $next.awayTeam.shortName // \"\"), "
-      + "($next.utcDate // \"\"), "
-      + "($last.homeTeam.tla // $last.homeTeam.shortName // \"\"), "
-      + "($last.awayTeam.tla // $last.awayTeam.shortName // \"\"), "
-      + "(($last.score.fullTime.home // \"\") | tostring), "
-      + "(($last.score.fullTime.away // \"\") | tostring)] | join(\"|\")' "
-      + "|| echo \"$code|||||||\"; "
+      + "| jq -c --arg code \"$code\" '(.matches // []) as $m "
+      + "| ($m | map(select(.status==\"SCHEDULED\" or .status==\"TIMED\"))) as $upcoming "
+      + "| (if ($upcoming | length) > 0 then ($upcoming | map(.matchday // 0) | min) else null end) as $nextMD "
+      + "| (if $nextMD != null then ($upcoming | map(select((.matchday // 0) == $nextMD)) | sort_by(.utcDate)) else [] end) as $nextGames "
+      + "| ($m | map(select(.status==\"FINISHED\"))) as $finished "
+      + "| (if ($finished | length) > 0 then ($finished | map(.matchday // 0) | max) else null end) as $lastMD "
+      + "| (if $lastMD != null then ($finished | map(select((.matchday // 0) == $lastMD)) | sort_by(.utcDate)) else [] end) as $lastGames "
+      + "| {code: $code, "
+      + "next: ($nextGames | map({h: (.homeTeam.tla // .homeTeam.shortName // \"?\"), a: (.awayTeam.tla // .awayTeam.shortName // \"?\"), d: .utcDate})), "
+      + "last: ($lastGames | map({h: (.homeTeam.tla // .homeTeam.shortName // \"?\"), a: (.awayTeam.tla // .awayTeam.shortName // \"?\"), hs: (.score.fullTime.home // 0), as: (.score.fullTime.away // 0)}))}' "
+      + "|| printf '{\"code\":\"%s\",\"next\":[],\"last\":[]}' \"$code\"; "
       + "done"
     ]
     footballProcess.running = true
@@ -86,20 +86,17 @@ Rectangle {
         var next = {}
         var any = false
         for (var i = 0; i < lines.length; i++) {
-          var parts = lines[i].split("|")
-          if (parts.length !== 8) continue
-          var code = parts[0]
-          var entry = {
-            nextHome: parts[1] || "--",
-            nextAway: parts[2] || "--",
-            nextKickoff: parts[3] || "",
-            lastHome: parts[4] || "--",
-            lastAway: parts[5] || "--",
-            lastHomeScore: parts[6] || "",
-            lastAwayScore: parts[7] || ""
+          if (!lines[i].length) continue
+          try {
+            var obj = JSON.parse(lines[i])
+            if (!obj || !obj.code) continue
+            var nextGames = Array.isArray(obj.next) ? obj.next : []
+            var lastGames = Array.isArray(obj.last) ? obj.last : []
+            if (nextGames.length || lastGames.length) any = true
+            next[obj.code] = { next: nextGames, last: lastGames }
+          } catch (e) {
+            continue
           }
-          if (entry.nextKickoff.length || entry.lastHomeScore.length) any = true
-          next[code] = entry
         }
 
         root.byCode = next
@@ -118,7 +115,10 @@ Rectangle {
   }
 
   Column {
-    anchors.fill: parent
+    id: mainColumn
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
     anchors.margins: Style.space(14)
     spacing: Style.space(8)
 
@@ -183,25 +183,52 @@ Rectangle {
     Column {
       visible: !root.needsKey
       width: parent.width
-      spacing: 2
+      spacing: 3
 
       Text {
         width: parent.width
-        text: "NEXT  ·  " + (root.active ? root.active.nextHome + " vs " + root.active.nextAway : "--")
-        color: root.foreground
-        elide: Text.ElideRight
+        text: "NEXT GAMEWEEK"
+        color: root.accentSoft
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
-        font.pixelSize: Style.font.body
+        font.pixelSize: Style.font.caption
         font.bold: true
       }
 
       Text {
+        visible: !root.active || root.active.next.length === 0
         width: parent.width
-        text: root.active && root.active.nextKickoff.length ? root.formatKickoff(root.active.nextKickoff) : "No upcoming fixture in range"
+        text: "No upcoming fixtures in range"
         color: root.muted
-        elide: Text.ElideRight
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption
+      }
+
+      Repeater {
+        model: root.active ? root.active.next : []
+
+        delegate: Row {
+          required property var modelData
+          width: parent.width
+
+          Text {
+            width: parent.width * 0.55
+            text: modelData.h + "  vs  " + modelData.a
+            color: root.foreground
+            elide: Text.ElideRight
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+
+          Text {
+            width: parent.width * 0.45
+            text: root.formatKickoff(modelData.d)
+            color: root.muted
+            horizontalAlignment: Text.AlignRight
+            elide: Text.ElideRight
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
+        }
       }
     }
 
@@ -210,18 +237,38 @@ Rectangle {
     Column {
       visible: !root.needsKey
       width: parent.width
-      spacing: 2
+      spacing: 3
 
       Text {
         width: parent.width
-        text: "LAST  ·  " + (root.active && root.active.lastHomeScore.length
-          ? root.active.lastHome + " " + root.active.lastHomeScore + " - " + root.active.lastAwayScore + " " + root.active.lastAway
-          : "No recent result in range")
+        text: "PREVIOUS GAMEWEEK"
         color: root.accentSoft
-        elide: Text.ElideRight
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.caption
         font.bold: true
+      }
+
+      Text {
+        visible: !root.active || root.active.last.length === 0
+        width: parent.width
+        text: "No results in range"
+        color: root.muted
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.caption
+      }
+
+      Repeater {
+        model: root.active ? root.active.last : []
+
+        delegate: Text {
+          required property var modelData
+          width: parent.width
+          text: modelData.h + "  " + modelData.hs + " - " + modelData.as + "  " + modelData.a
+          color: root.foreground
+          elide: Text.ElideRight
+          font.family: root.bar ? root.bar.fontFamily : Style.font.family
+          font.pixelSize: Style.font.caption
+        }
       }
     }
   }
