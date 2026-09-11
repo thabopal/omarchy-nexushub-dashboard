@@ -62,13 +62,14 @@ Rectangle {
       "    root = ET.fromstring(data)\n" +
       "    item = root.find('./channel/item')\n" +
       "    title = (item.findtext('title') or '') if item is not None else ''\n" +
+      "    link = (item.findtext('link') or '') if item is not None else ''\n" +
       "    if ' - ' in title:\n" +
       "      headline, source = title.rsplit(' - ', 1)\n" +
       "    else:\n" +
       "      headline, source = title, ''\n" +
-      "    print(label + '\\t' + headline.strip() + '\\t' + source.strip())\n" +
+      "    print(label + '\\t' + headline.strip() + '\\t' + source.strip() + '\\t' + link.strip())\n" +
       "  except Exception:\n" +
-      "    print(label + '\\t\\t')\n" +
+      "    print(label + '\\t\\t\\t')\n" +
       "PYEOF"
     ]
 
@@ -86,10 +87,10 @@ Rectangle {
         var any = false
         for (var i = 0; i < lines.length; i++) {
           var parts = lines[i].split("\t")
-          if (parts.length !== 3) continue
+          if (parts.length !== 4) continue
           var headline = parts[1]
           if (headline.length) any = true
-          next[parts[0]] = { headline: headline, source: parts[2] }
+          next[parts[0]] = { headline: headline, source: parts[2], link: parts[3] }
         }
 
         root.headlines = next
@@ -141,38 +142,59 @@ Rectangle {
     Repeater {
       model: root.categories
 
-      delegate: Column {
+      delegate: Item {
+        id: categoryRow
         required property var modelData
         readonly property var entry: root.headlineFor(modelData.key)
+        readonly property bool hasLink: categoryRow.entry && categoryRow.entry.link.length > 0
         width: newsColumn.width
-        spacing: 1
+        height: rowContent.implicitHeight
 
-        Text {
+        Column {
+          id: rowContent
           width: parent.width
-          text: modelData.label
-          color: root.accentSoft
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.caption
-          font.bold: true
+          spacing: 1
+
+          Text {
+            width: parent.width
+            text: modelData.label
+            color: root.accentSoft
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+            font.bold: true
+          }
+
+          Text {
+            id: headlineText
+            width: parent.width
+            text: categoryRow.entry && categoryRow.entry.headline.length ? categoryRow.entry.headline : "No headline available"
+            color: linkArea.containsMouse ? root.accentSoft : root.foreground
+            font.underline: categoryRow.hasLink && linkArea.containsMouse
+            elide: Text.ElideRight
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.body
+
+            Behavior on color { ColorAnimation { duration: 120 } }
+          }
+
+          Text {
+            width: parent.width
+            visible: categoryRow.entry && categoryRow.entry.source.length > 0
+            text: categoryRow.entry ? categoryRow.entry.source : ""
+            color: root.muted
+            elide: Text.ElideRight
+            font.family: root.bar ? root.bar.fontFamily : Style.font.family
+            font.pixelSize: Style.font.caption
+          }
         }
 
-        Text {
-          width: parent.width
-          text: parent.entry && parent.entry.headline.length ? parent.entry.headline : "No headline available"
-          color: root.foreground
-          elide: Text.ElideRight
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.body
-        }
-
-        Text {
-          width: parent.width
-          visible: parent.entry && parent.entry.source.length > 0
-          text: parent.entry ? parent.entry.source : ""
-          color: root.muted
-          elide: Text.ElideRight
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.caption
+        MouseArea {
+          id: linkArea
+          anchors.fill: parent
+          enabled: categoryRow.hasLink
+          hoverEnabled: categoryRow.hasLink
+          cursorShape: categoryRow.hasLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+          onClicked: Qt.openUrlExternally(categoryRow.entry.link)
         }
       }
     }

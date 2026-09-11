@@ -11,13 +11,12 @@ Item {
   property var targetScreen: null
   property bool systemMonitorVisible: true
   property bool weatherVisible: true
-  property bool eplVisible: true
-  property bool uclVisible: true
+  property bool footballVisible: true
   property bool newsVisible: true
   property string footballApiKey: ""
 
   readonly property bool hasVisibleWidgets: root.systemMonitorVisible || root.weatherVisible
-    || root.eplVisible || root.uclVisible || root.newsVisible
+    || root.footballVisible || root.newsVisible
 
   PanelWindow {
     id: desktopWindow
@@ -42,11 +41,14 @@ Item {
     WlrLayershell.layer: WlrLayer.Bottom
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
-    // These widgets are informational: leave the entire surface click-through
-    // so desktop and application input continues to behave normally.
+    // Most widgets here are purely informational: leave that part of the
+    // surface click-through so desktop and application input continues to
+    // behave normally. Football (competition switch) and News (headline
+    // links) have real controls, so their own bounds accept input — same
+    // approach as the dock's mask matching just its own strip.
     mask: Region {
-      width: 0
-      height: 0
+      Region { item: footballLoader }
+      Region { item: newsLoader }
     }
 
     Column {
@@ -93,8 +95,9 @@ Item {
       }
 
       Loader {
+        id: footballLoader
         width: parent.width
-        active: root.eplVisible
+        active: root.footballVisible
         visible: active
         height: item ? item.implicitHeight : 0
 
@@ -102,8 +105,6 @@ Item {
           width: parent ? parent.width : 0
           bar: root.bar
           apiKey: root.footballApiKey
-          competitionCode: "PL"
-          competitionShort: "EPL"
           surface: "#E6171C26"
           foreground: "#F4EEE7"
           muted: "#A8A0AA"
@@ -113,26 +114,7 @@ Item {
       }
 
       Loader {
-        width: parent.width
-        active: root.uclVisible
-        visible: active
-        height: item ? item.implicitHeight : 0
-
-        sourceComponent: Components.FootballCard {
-          width: parent ? parent.width : 0
-          bar: root.bar
-          apiKey: root.footballApiKey
-          competitionCode: "CL"
-          competitionShort: "UCL"
-          surface: "#E6171C26"
-          foreground: "#F4EEE7"
-          muted: "#A8A0AA"
-          accent: "#D86F55"
-          accentSoft: "#E5A66E"
-        }
-      }
-
-      Loader {
+        id: newsLoader
         width: parent.width
         active: root.newsVisible
         visible: active

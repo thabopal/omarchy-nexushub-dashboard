@@ -22,8 +22,7 @@
       "weatherEnabled": true,
       "githubActivityEnabled": true,
       "projectPulseEnabled": true,
-      "eplEnabled": true,
-      "uclEnabled": true,
+      "footballEnabled": true,
       "newsEnabled": true,
       "footballApiKey": "",
       "dockOrder": ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"],
@@ -61,15 +60,9 @@
         "defaultValue": true
       },
       {
-        "key": "eplEnabled",
+        "key": "footballEnabled",
         "type": "boolean",
-        "label": "Show EPL Fixtures",
-        "defaultValue": true
-      },
-      {
-        "key": "uclEnabled",
-        "type": "boolean",
-        "label": "Show Champions League Fixtures",
+        "label": "Show Football Fixtures",
         "defaultValue": true
       },
       {
@@ -83,7 +76,7 @@
         "type": "string",
         "label": "football-data.org API key",
         "defaultValue": "",
-        "description": "Free key from football-data.org/client/register. Required for the EPL and Champions League widgets; they show a placeholder until this is set."
+        "description": "Free key from football-data.org/client/register. Required for the football widget; it shows a placeholder until this is set. Switch between EPL and Champions League with the tabs on the card itself."
       }
     ]
   }

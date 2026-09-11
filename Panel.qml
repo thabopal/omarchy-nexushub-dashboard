@@ -17,8 +17,7 @@ Panel {
   readonly property bool weatherEnabled: settingEnabled("weatherEnabled")
   readonly property bool githubActivityEnabled: settingEnabled("githubActivityEnabled")
   readonly property bool projectPulseEnabled: settingEnabled("projectPulseEnabled")
-  readonly property bool eplEnabled: settingEnabled("eplEnabled")
-  readonly property bool uclEnabled: settingEnabled("uclEnabled")
+  readonly property bool footballEnabled: settingEnabled("footballEnabled")
   readonly property bool newsEnabled: settingEnabled("newsEnabled")
   readonly property string activeProfile: settings && settings.activeProfile
     ? String(settings.activeProfile)
@@ -102,8 +101,7 @@ Panel {
         weatherEnabled: false,
         githubActivityEnabled: true,
         projectPulseEnabled: true,
-        eplEnabled: false,
-        uclEnabled: false,
+        footballEnabled: false,
         newsEnabled: false
       })
     } else if (profile === "focus") {
@@ -113,8 +111,7 @@ Panel {
         weatherEnabled: false,
         githubActivityEnabled: false,
         projectPulseEnabled: false,
-        eplEnabled: false,
-        uclEnabled: false,
+        footballEnabled: false,
         newsEnabled: false
       })
     } else {
@@ -124,8 +121,7 @@ Panel {
         weatherEnabled: true,
         githubActivityEnabled: false,
         projectPulseEnabled: true,
-        eplEnabled: true,
-        uclEnabled: true,
+        footballEnabled: true,
         newsEnabled: true
       })
     }
@@ -285,8 +281,7 @@ Panel {
             weatherEnabled: root.weatherEnabled
             githubActivityEnabled: root.githubActivityEnabled
             projectPulseEnabled: root.projectPulseEnabled
-            eplEnabled: root.eplEnabled
-            uclEnabled: root.uclEnabled
+            footballEnabled: root.footballEnabled
             newsEnabled: root.newsEnabled
             onProfileRequested: function(profile) { root.applyProfile(profile) }
             onWidgetRequested: function(key, enabled) { root.setWidgetEnabled(key, enabled) }
