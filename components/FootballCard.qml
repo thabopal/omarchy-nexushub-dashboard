@@ -41,6 +41,20 @@ Rectangle {
     return Qt.formatDateTime(date, "ddd d MMM, HH:mm")
   }
 
+  function nextTicker() {
+    if (!root.active || !root.active.next.length) return "No upcoming fixtures in range"
+    return root.active.next.map(function(m) {
+      return m.h + " vs " + m.a + "  ·  " + root.formatKickoff(m.d)
+    }).join("      •      ")
+  }
+
+  function lastTicker() {
+    if (!root.active || !root.active.last.length) return "No results in range"
+    return root.active.last.map(function(m) {
+      return m.h + "  " + m.hs + " - " + m.as + "  " + m.a
+    }).join("      •      ")
+  }
+
   function refresh() {
     if (root.needsKey) return
     if (footballProcess.running) return
@@ -194,41 +208,12 @@ Rectangle {
         font.bold: true
       }
 
-      Text {
-        visible: !root.active || root.active.next.length === 0
+      Marquee {
         width: parent.width
-        text: "No upcoming fixtures in range"
-        color: root.muted
-        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-        font.pixelSize: Style.font.caption
-      }
-
-      Repeater {
-        model: root.active ? root.active.next : []
-
-        delegate: Row {
-          required property var modelData
-          width: parent.width
-
-          Text {
-            width: parent.width * 0.55
-            text: modelData.h + "  vs  " + modelData.a
-            color: root.foreground
-            elide: Text.ElideRight
-            font.family: root.bar ? root.bar.fontFamily : Style.font.family
-            font.pixelSize: Style.font.caption
-          }
-
-          Text {
-            width: parent.width * 0.45
-            text: root.formatKickoff(modelData.d)
-            color: root.muted
-            horizontalAlignment: Text.AlignRight
-            elide: Text.ElideRight
-            font.family: root.bar ? root.bar.fontFamily : Style.font.family
-            font.pixelSize: Style.font.caption
-          }
-        }
+        text: root.nextTicker()
+        textColor: root.active && root.active.next.length ? root.foreground : root.muted
+        fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
+        fontPixelSize: Style.font.caption
       }
     }
 
@@ -248,27 +233,12 @@ Rectangle {
         font.bold: true
       }
 
-      Text {
-        visible: !root.active || root.active.last.length === 0
+      Marquee {
         width: parent.width
-        text: "No results in range"
-        color: root.muted
-        font.family: root.bar ? root.bar.fontFamily : Style.font.family
-        font.pixelSize: Style.font.caption
-      }
-
-      Repeater {
-        model: root.active ? root.active.last : []
-
-        delegate: Text {
-          required property var modelData
-          width: parent.width
-          text: modelData.h + "  " + modelData.hs + " - " + modelData.as + "  " + modelData.a
-          color: root.foreground
-          elide: Text.ElideRight
-          font.family: root.bar ? root.bar.fontFamily : Style.font.family
-          font.pixelSize: Style.font.caption
-        }
+        text: root.lastTicker()
+        textColor: root.active && root.active.last.length ? root.foreground : root.muted
+        fontFamily: root.bar ? root.bar.fontFamily : Style.font.family
+        fontPixelSize: Style.font.caption
       }
     }
   }
