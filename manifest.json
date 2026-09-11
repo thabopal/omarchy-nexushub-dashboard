@@ -22,7 +22,7 @@
       "weatherEnabled": true,
       "githubActivityEnabled": true,
       "projectPulseEnabled": true,
-      "dockOrder": ["browser", "terminal", "editor", "spotify", "docker"],
+      "dockOrder": ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"],
       "dockHidden": []
     },
     "schema": [

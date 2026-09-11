@@ -17,7 +17,7 @@ BarWidget {
   readonly property bool weatherEnabled: !root.settings || root.settings.weatherEnabled !== false
   readonly property var dockOrder: root.settings && root.settings.dockOrder instanceof Array
     ? root.settings.dockOrder
-    : ["browser", "terminal", "editor", "spotify", "docker"]
+    : ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
   readonly property var dockHidden: root.settings && root.settings.dockHidden instanceof Array
     ? root.settings.dockHidden
     : []

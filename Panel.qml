@@ -59,7 +59,7 @@ Panel {
   }
 
   function normalizedDockOrder() {
-    var defaults = ["browser", "terminal", "editor", "spotify", "docker"]
+    var defaults = ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
     var configured = root.settings && root.settings.dockOrder instanceof Array
       ? root.settings.dockOrder
       : []

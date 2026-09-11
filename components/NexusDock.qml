@@ -15,7 +15,7 @@ Rectangle {
   property var clients: []
   property int hoveredIndex: -1
   property bool refreshPending: false
-  property var dockOrder: ["browser", "terminal", "editor", "spotify", "docker"]
+  property var dockOrder: ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
   property var dockHidden: []
   readonly property var visibleDockItems: orderedDockItems()
 
@@ -76,6 +76,16 @@ Rectangle {
         command: "omarchy-launch-or-focus 'kitty|alacritty|foot|ghostty' 'uwsm-app -- $TERMINAL'",
         patterns: ["kitty", "alacritty", "foot", "ghostty"]
       },
+      files: {
+        id: "files", label: "", tooltip: "Files",
+        command: "omarchy-launch-or-focus 'nautilus|thunar|dolphin|pcmanfm|nemo' 'omarchy-launch-nautilus'",
+        patterns: ["nautilus", "thunar", "dolphin", "pcmanfm", "nemo"]
+      },
+      mail: {
+        id: "mail", label: "", tooltip: "Mail",
+        command: "omarchy-launch-or-focus geary",
+        patterns: ["geary"]
+      },
       editor: {
         id: "editor", label: "", tooltip: "Editor",
         command: "omarchy-launch-or-focus 'code|codium|cursor|zed' 'omarchy-launch-editor'",
@@ -96,7 +106,7 @@ Rectangle {
   }
 
   function orderedDockItems() {
-    var defaults = ["browser", "terminal", "editor", "spotify", "docker"]
+    var defaults = ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
     var source = root.dockOrder instanceof Array ? root.dockOrder : defaults
     var hidden = root.dockHidden instanceof Array ? root.dockHidden : []
     var result = []

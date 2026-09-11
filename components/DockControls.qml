@@ -9,7 +9,7 @@ Rectangle {
   property color foreground: "#F4EEE7"
   property color muted: "#8E8791"
   property color accent: "#D86F55"
-  property var dockOrder: ["browser", "terminal", "editor", "spotify", "docker"]
+  property var dockOrder: ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
   property var dockHidden: []
 
   signal itemToggled(string itemId, bool enabled)
@@ -17,6 +17,8 @@ Rectangle {
 
   readonly property var labels: ({
     browser: "Browser",
+    files: "Files",
+    mail: "Mail",
     terminal: "Terminal",
     editor: "Editor",
     spotify: "Spotify",
