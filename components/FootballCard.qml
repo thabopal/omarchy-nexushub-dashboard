@@ -64,15 +64,20 @@ Rectangle {
     footballProcess.command = [
       "bash",
       "-lc",
-      "set -o pipefail; from=$(date -u -d '-21 days' +%F); to=$(date -u -d '+45 days' +%F); "
+      // Look back as far as ahead: UCL matchdays can be ~4 weeks apart.
+      "set -o pipefail; from=$(date -u -d '-45 days' +%F); to=$(date -u -d '+45 days' +%F); "
       + "for code in PL CL; do "
       + "curl -fsS --max-time 8 -H \"X-Auth-Token: " + root.apiKey + "\" "
       + "\"https://api.football-data.org/v4/competitions/$code/matches?dateFrom=$from&dateTo=$to\" "
       + "| jq -c --arg code \"$code\" '(.matches // []) as $m "
       + "| ($m | map(select(.status==\"SCHEDULED\" or .status==\"TIMED\"))) as $upcoming "
-      + "| (if ($upcoming | length) > 0 then ($upcoming | map(.matchday // 0) | min) else null end) as $nextMD "
-      + "| (if $nextMD != null then ($upcoming | map(select((.matchday // 0) == $nextMD)) | sort_by(.utcDate)) else [] end) as $nextGames "
       + "| ($m | map(select(.status==\"FINISHED\"))) as $finished "
+      // Next gameweek = earliest one that is still mostly unplayed, so a single
+      // postponed fixture doesn't hide the real next round. Stragglers from
+      // earlier gameweeks are kept in the list, sorted by kickoff.
+      + "| ($upcoming | map(.matchday // 0) | unique | map(. as $d | select(($upcoming | map(select((.matchday // 0) == $d)) | length) >= ($finished | map(select((.matchday // 0) == $d)) | length)))) as $openMDs "
+      + "| (if ($openMDs | length) > 0 then ($openMDs | min) else null end) as $nextMD "
+      + "| (if $nextMD != null then ($upcoming | map(select((.matchday // 0) <= $nextMD)) | sort_by(.utcDate)) else [] end) as $nextGames "
       + "| (if ($finished | length) > 0 then ($finished | map(.matchday // 0) | max) else null end) as $lastMD "
       + "| (if $lastMD != null then ($finished | map(select((.matchday // 0) == $lastMD)) | sort_by(.utcDate)) else [] end) as $lastGames "
       + "| {code: $code, "

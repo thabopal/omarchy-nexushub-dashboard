@@ -47,12 +47,12 @@ Rectangle {
       "bash",
       "-lc",
       "timeout 25 python3 <<'PYEOF'\n" +
-      "import urllib.request, xml.etree.ElementTree as ET\n" +
+      "import urllib.request, xml.etree.ElementTree as ET, email.utils\n" +
       "feeds = [\n" +
-      "  ('AI', 'https://news.google.com/rss/search?q=artificial+intelligence+OR+%22machine+learning%22+OR+LLM&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
-      "  ('ECONOMY', 'https://news.google.com/rss/search?q=%22South+Africa%22+%28economy+OR+inflation+OR+rand+OR+%22fuel+price%22%29&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
-      "  ('POLITICS', 'https://news.google.com/rss/search?q=%28election+OR+government+OR+parliament+OR+president%29+%28%22South+Africa%22+OR+Europe+OR+%22United+States%22%29&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
-      "  ('TECH', 'https://news.google.com/rss/search?q=%28smartphone+OR+hardware+OR+software+OR+Arduino+OR+%22Raspberry+Pi%22%29&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
+      "  ('AI', 'https://news.google.com/rss/search?q=artificial+intelligence+OR+%22machine+learning%22+OR+LLM+when%3A2d&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
+      "  ('ECONOMY', 'https://news.google.com/rss/search?q=%22South+Africa%22+%28economy+OR+inflation+OR+rand+OR+%22fuel+price%22%29+when%3A2d&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
+      "  ('POLITICS', 'https://news.google.com/rss/search?q=%28election+OR+government+OR+parliament+OR+president%29+%28%22South+Africa%22+OR+Europe+OR+%22United+States%22%29+when%3A2d&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
+      "  ('TECH', 'https://news.google.com/rss/search?q=%28smartphone+OR+laptop+OR+gadget+OR+chip+OR+%22software+update%22+OR+Arduino+OR+%22Raspberry+Pi%22%29+-sport+-F1+when%3A2d&hl=en-ZA&gl=ZA&ceid=ZA:en'),\n" +
       "]\n" +
       "for label, url in feeds:\n" +
       "  try:\n" +
@@ -60,7 +60,14 @@ Rectangle {
       "    with urllib.request.urlopen(req, timeout=8) as resp:\n" +
       "      data = resp.read()\n" +
       "    root = ET.fromstring(data)\n" +
-      "    item = root.find('./channel/item')\n" +
+      "    def published(it):\n" +
+      "      try:\n" +
+      "        return email.utils.parsedate_to_datetime(it.findtext('pubDate') or '').timestamp()\n" +
+      "      except Exception:\n" +
+      "        return 0\n" +
+      "    # Google ranks by relevance; take the newest of the top results.\n" +
+      "    items = root.findall('./channel/item')[:10]\n" +
+      "    item = max(items, key=published) if items else None\n" +
       "    title = (item.findtext('title') or '') if item is not None else ''\n" +
       "    link = (item.findtext('link') or '') if item is not None else ''\n" +
       "    if ' - ' in title:\n" +
