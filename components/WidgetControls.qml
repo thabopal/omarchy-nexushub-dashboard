@@ -14,6 +14,7 @@ Rectangle {
   property bool systemMonitorEnabled: true
   property bool weatherEnabled: true
   property bool githubActivityEnabled: true
+  property bool githubCalendarEnabled: true
   property bool projectPulseEnabled: true
   property bool footballEnabled: true
   property bool newsEnabled: true
@@ -101,6 +102,7 @@ Rectangle {
           { key: "widgetsEnabled", label: "All Desktop Widgets", enabled: root.widgetsEnabled },
           { key: "systemMonitorEnabled", label: "System Monitor · Desktop", enabled: root.systemMonitorEnabled },
           { key: "weatherEnabled", label: "Weather · Desktop", enabled: root.weatherEnabled },
+          { key: "githubCalendarEnabled", label: "GitHub Contributions · Desktop", enabled: root.githubCalendarEnabled },
           { key: "footballEnabled", label: "Football Fixtures · Desktop", enabled: root.footballEnabled },
           { key: "newsEnabled", label: "Top News · Desktop", enabled: root.newsEnabled },
           { key: "githubActivityEnabled", label: "GitHub Activity", enabled: root.githubActivityEnabled },

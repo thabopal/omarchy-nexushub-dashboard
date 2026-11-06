@@ -16,6 +16,7 @@ BarWidget {
   readonly property bool widgetsEnabled: !root.settings || root.settings.widgetsEnabled !== false
   readonly property bool systemMonitorEnabled: !root.settings || root.settings.systemMonitorEnabled !== false
   readonly property bool weatherEnabled: !root.settings || root.settings.weatherEnabled !== false
+  readonly property bool githubCalendarEnabled: !root.settings || root.settings.githubCalendarEnabled !== false
   readonly property bool footballEnabled: !root.settings || root.settings.footballEnabled !== false
   readonly property bool newsEnabled: !root.settings || root.settings.newsEnabled !== false
   readonly property string footballApiKey: root.settings && root.settings.footballApiKey
@@ -93,6 +94,7 @@ BarWidget {
     widgetsVisible: root.widgetsEnabled
     systemMonitorVisible: root.systemMonitorEnabled
     weatherVisible: root.weatherEnabled
+    githubCalendarVisible: root.githubCalendarEnabled
     footballVisible: root.footballEnabled
     newsVisible: root.newsEnabled
     footballApiKey: root.footballApiKey

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "dev.thabopal.nexushub-dashboard",
   "name": "NexusHub Dashboard",
-  "version": "0.7.0-alpha.3",
+  "version": "0.8.0-alpha.1",
   "author": "Thabo Pali",
   "license": "MIT",
   "description": "A modular personal dashboard, control center, and desktop dock for Omarchy.",
@@ -22,6 +22,7 @@
       "systemMonitorEnabled": true,
       "weatherEnabled": true,
       "githubActivityEnabled": true,
+      "githubCalendarEnabled": true,
       "projectPulseEnabled": true,
       "footballEnabled": true,
       "newsEnabled": true,
@@ -54,6 +55,13 @@
         "type": "boolean",
         "label": "Show Weather",
         "defaultValue": true
+      },
+      {
+        "key": "githubCalendarEnabled",
+        "type": "boolean",
+        "label": "Show GitHub Contributions grid",
+        "defaultValue": true,
+        "description": "Last 6 months of public and private contributions on the desktop. Uses the signed-in gh CLI (gh auth login); refreshes every 30 minutes."
       },
       {
         "key": "githubActivityEnabled",

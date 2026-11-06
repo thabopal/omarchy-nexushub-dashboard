@@ -18,6 +18,7 @@ Panel {
   readonly property bool systemMonitorEnabled: settingEnabled("systemMonitorEnabled")
   readonly property bool weatherEnabled: settingEnabled("weatherEnabled")
   readonly property bool githubActivityEnabled: settingEnabled("githubActivityEnabled")
+  readonly property bool githubCalendarEnabled: settingEnabled("githubCalendarEnabled")
   readonly property bool projectPulseEnabled: settingEnabled("projectPulseEnabled")
   readonly property bool footballEnabled: settingEnabled("footballEnabled")
   readonly property bool newsEnabled: settingEnabled("newsEnabled")
@@ -108,6 +109,7 @@ Panel {
         activeProfile: profile,
         systemMonitorEnabled: true,
         weatherEnabled: false,
+        githubCalendarEnabled: true,
         githubActivityEnabled: true,
         projectPulseEnabled: true,
         footballEnabled: false,
@@ -118,6 +120,7 @@ Panel {
         activeProfile: profile,
         systemMonitorEnabled: true,
         weatherEnabled: false,
+        githubCalendarEnabled: false,
         githubActivityEnabled: false,
         projectPulseEnabled: false,
         footballEnabled: false,
@@ -128,6 +131,7 @@ Panel {
         activeProfile: "daily",
         systemMonitorEnabled: true,
         weatherEnabled: true,
+        githubCalendarEnabled: true,
         githubActivityEnabled: false,
         projectPulseEnabled: true,
         footballEnabled: true,
@@ -290,6 +294,7 @@ Panel {
             systemMonitorEnabled: root.systemMonitorEnabled
             weatherEnabled: root.weatherEnabled
             githubActivityEnabled: root.githubActivityEnabled
+            githubCalendarEnabled: root.githubCalendarEnabled
             projectPulseEnabled: root.projectPulseEnabled
             footballEnabled: root.footballEnabled
             newsEnabled: root.newsEnabled

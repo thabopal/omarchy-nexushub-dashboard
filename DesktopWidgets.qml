@@ -12,6 +12,7 @@ Item {
   property bool widgetsVisible: true
   property bool systemMonitorVisible: true
   property bool weatherVisible: true
+  property bool githubCalendarVisible: true
   property bool footballVisible: true
   property bool newsVisible: true
   property string footballApiKey: ""
@@ -130,6 +131,51 @@ Item {
           accent: "#D86F55"
           accentSoft: "#E5A66E"
         }
+      }
+    }
+  }
+
+  // The GitHub grid sits top-left: the right-hand column is already as tall
+  // as a 1200px screen allows. Purely informational, so fully click-through.
+  PanelWindow {
+    id: leftWindow
+    screen: root.targetScreen
+    visible: root.widgetsVisible && root.githubCalendarVisible && root.targetScreen !== null
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    implicitWidth: Style.space(430)
+    implicitHeight: calendarLoader.height
+
+    anchors {
+      top: true
+      left: true
+    }
+
+    margins {
+      top: Style.space(72)
+      left: Style.space(24)
+    }
+
+    WlrLayershell.namespace: "nexushub-desktop-widgets-left"
+    WlrLayershell.layer: WlrLayer.Bottom
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+
+    mask: Region {}
+
+    Loader {
+      id: calendarLoader
+      width: parent.width
+      active: leftWindow.visible
+      height: item ? item.implicitHeight : 0
+
+      sourceComponent: Components.GitHubCalendar {
+        width: parent ? parent.width : 0
+        bar: root.bar
+        surface: "#E6171C26"
+        foreground: "#F4EEE7"
+        muted: "#A8A0AA"
+        accent: "#D86F55"
+        accentSoft: "#E5A66E"
       }
     }
   }
