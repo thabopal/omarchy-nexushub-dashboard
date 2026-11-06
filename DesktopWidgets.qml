@@ -9,14 +9,15 @@ Item {
 
   property var bar: null
   property var targetScreen: null
+  property bool widgetsVisible: true
   property bool systemMonitorVisible: true
   property bool weatherVisible: true
   property bool footballVisible: true
   property bool newsVisible: true
   property string footballApiKey: ""
 
-  readonly property bool hasVisibleWidgets: root.systemMonitorVisible || root.weatherVisible
-    || root.footballVisible || root.newsVisible
+  readonly property bool hasVisibleWidgets: root.widgetsVisible && (root.systemMonitorVisible || root.weatherVisible
+    || root.footballVisible || root.newsVisible)
 
   PanelWindow {
     id: desktopWindow
@@ -58,7 +59,7 @@ Item {
 
       Loader {
         width: parent.width
-        active: root.systemMonitorVisible
+        active: root.hasVisibleWidgets && root.systemMonitorVisible
         visible: active
         height: item ? item.implicitHeight : 0
 
@@ -76,7 +77,7 @@ Item {
 
       Loader {
         width: parent.width
-        active: root.weatherVisible
+        active: root.hasVisibleWidgets && root.weatherVisible
         visible: active
         height: item ? item.implicitHeight : 0
 
@@ -97,7 +98,7 @@ Item {
       Loader {
         id: footballLoader
         width: parent.width
-        active: root.footballVisible
+        active: root.hasVisibleWidgets && root.footballVisible
         visible: active
         height: item ? item.implicitHeight : 0
 
@@ -116,7 +117,7 @@ Item {
       Loader {
         id: newsLoader
         width: parent.width
-        active: root.newsVisible
+        active: root.hasVisibleWidgets && root.newsVisible
         visible: active
         height: item ? item.implicitHeight : 0
 

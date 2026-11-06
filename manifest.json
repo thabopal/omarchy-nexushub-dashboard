@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "dev.thabopal.nexushub-dashboard",
   "name": "NexusHub Dashboard",
-  "version": "0.7.0-alpha.2",
+  "version": "0.7.0-alpha.3",
   "author": "Thabo Pali",
   "license": "MIT",
   "description": "A modular personal dashboard, control center, and desktop dock for Omarchy.",
@@ -17,6 +17,7 @@
     "defaultSection": "right",
     "defaults": {
       "dockEnabled": true,
+      "widgetsEnabled": true,
       "activeProfile": "custom",
       "systemMonitorEnabled": true,
       "weatherEnabled": true,
@@ -34,6 +35,13 @@
         "type": "boolean",
         "label": "Show NexusHub desktop dock",
         "defaultValue": true
+      },
+      {
+        "key": "widgetsEnabled",
+        "type": "boolean",
+        "label": "Show NexusHub desktop widgets",
+        "defaultValue": true,
+        "description": "Master switch for all desktop cards (System Monitor, Weather, Football, News). The per-card switches below are remembered while this is off."
       },
       {
         "key": "systemMonitorEnabled",

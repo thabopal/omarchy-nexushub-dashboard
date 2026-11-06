@@ -13,6 +13,7 @@ BarWidget {
     ? panelLoader.item.popoutSwitchClosing === true
     : false
   readonly property bool dockEnabled: !root.settings || root.settings.dockEnabled !== false
+  readonly property bool widgetsEnabled: !root.settings || root.settings.widgetsEnabled !== false
   readonly property bool systemMonitorEnabled: !root.settings || root.settings.systemMonitorEnabled !== false
   readonly property bool weatherEnabled: !root.settings || root.settings.weatherEnabled !== false
   readonly property bool footballEnabled: !root.settings || root.settings.footballEnabled !== false
@@ -89,6 +90,7 @@ BarWidget {
   DesktopWidgets {
     bar: root.bar
     targetScreen: root.dockScreen()
+    widgetsVisible: root.widgetsEnabled
     systemMonitorVisible: root.systemMonitorEnabled
     weatherVisible: root.weatherEnabled
     footballVisible: root.footballEnabled

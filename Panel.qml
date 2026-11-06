@@ -13,6 +13,8 @@ Panel {
   property var hostWidget: null
   property var settings: ({})
 
+  readonly property bool dockEnabled: settingEnabled("dockEnabled")
+  readonly property bool widgetsEnabled: settingEnabled("widgetsEnabled")
   readonly property bool systemMonitorEnabled: settingEnabled("systemMonitorEnabled")
   readonly property bool weatherEnabled: settingEnabled("weatherEnabled")
   readonly property bool githubActivityEnabled: settingEnabled("githubActivityEnabled")
@@ -55,6 +57,13 @@ Panel {
   }
 
   function setWidgetEnabled(key, enabled) {
+    // Master switches are independent of the widget profile.
+    if (key === "widgetsEnabled" || key === "dockEnabled") {
+      var master = {}
+      master[key] = enabled
+      persistSettings(master)
+      return
+    }
     var values = { activeProfile: "custom" }
     values[key] = enabled
     persistSettings(values)
@@ -277,6 +286,7 @@ Panel {
             muted: root.textMuted
             accent: root.accent
             activeProfile: root.activeProfile
+            widgetsEnabled: root.widgetsEnabled
             systemMonitorEnabled: root.systemMonitorEnabled
             weatherEnabled: root.weatherEnabled
             githubActivityEnabled: root.githubActivityEnabled
@@ -296,6 +306,8 @@ Panel {
             accent: root.accent
             dockOrder: root.dockOrder
             dockHidden: root.dockHidden
+            dockEnabled: root.dockEnabled
+            onDockToggled: function(enabled) { root.setWidgetEnabled("dockEnabled", enabled) }
             onItemToggled: function(itemId, enabled) { root.setDockItemEnabled(itemId, enabled) }
             onMoveRequested: function(itemId, delta) { root.moveDockItem(itemId, delta) }
           }

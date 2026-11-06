@@ -11,7 +11,9 @@ Rectangle {
   property color accent: "#D86F55"
   property var dockOrder: ["browser", "files", "mail", "terminal", "editor", "spotify", "docker"]
   property var dockHidden: []
+  property bool dockEnabled: true
 
+  signal dockToggled(bool enabled)
   signal itemToggled(string itemId, bool enabled)
   signal moveRequested(string itemId, int delta)
 
@@ -47,6 +49,47 @@ Rectangle {
       font.family: root.bar ? root.bar.fontFamily : Style.font.family
       font.pixelSize: Style.font.caption
       font.bold: true
+    }
+
+    Item {
+      width: controls.width
+      height: Style.space(28)
+
+      Text {
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+        text: "Show NexusHub Dock"
+        color: root.foreground
+        font.family: root.bar ? root.bar.fontFamily : Style.font.family
+        font.pixelSize: Style.font.body
+        font.bold: true
+      }
+
+      Rectangle {
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        width: Style.space(38)
+        height: Style.space(21)
+        radius: height / 2
+        color: root.dockEnabled ? root.accent : "#303744"
+
+        Rectangle {
+          width: Style.space(15)
+          height: width
+          radius: width / 2
+          anchors.verticalCenter: parent.verticalCenter
+          x: root.dockEnabled ? parent.width - width - Style.space(3) : Style.space(3)
+          color: root.foreground
+
+          Behavior on x { NumberAnimation { duration: Style.duration(120) } }
+        }
+      }
+
+      MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.dockToggled(!root.dockEnabled)
+      }
     }
 
     Repeater {

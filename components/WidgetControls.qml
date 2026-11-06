@@ -10,6 +10,7 @@ Rectangle {
   property color muted: "#8E8791"
   property color accent: "#D86F55"
   property string activeProfile: "custom"
+  property bool widgetsEnabled: true
   property bool systemMonitorEnabled: true
   property bool weatherEnabled: true
   property bool githubActivityEnabled: true
@@ -97,6 +98,7 @@ Rectangle {
 
       Repeater {
         model: [
+          { key: "widgetsEnabled", label: "All Desktop Widgets", enabled: root.widgetsEnabled },
           { key: "systemMonitorEnabled", label: "System Monitor · Desktop", enabled: root.systemMonitorEnabled },
           { key: "weatherEnabled", label: "Weather · Desktop", enabled: root.weatherEnabled },
           { key: "footballEnabled", label: "Football Fixtures · Desktop", enabled: root.footballEnabled },
